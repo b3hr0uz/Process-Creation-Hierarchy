@@ -17,8 +17,8 @@ struct node {
     int *olderSibling;
     int *youngerSibling;
 }*pcb = NULL;
-
 typedef struct node pcb_type;
+
 int numberOfProcesses = 0;
 
 void printPCBTable(void) {
