@@ -53,7 +53,6 @@ void printPCBTable(void) {
     printf("\n");
 }
 
-
 void initializePCBArray(int maxProcessesNumber) {
     pcb = (pcb_type *)malloc(maxProcessesNumber * sizeof(pcb_type));
     for (int i = 0; i < maxProcessesNumber; i++) {
@@ -108,7 +107,6 @@ void option1(void) {
     printPCBTable();
 }
 
-
 void option2(void) {
     int p, q = 0;
     
@@ -147,29 +145,19 @@ void option2(void) {
     printPCBTable();
 }
 
+void recursivelyDestroyDescendants(int processIndex) {
+    // Base case: invalid index
+    if (processIndex == -1) return;
 
-void recursivelyDestroyChildProcesses(int processIndex, int parentIndex) {
-    if (processIndex == -1) {
-        return; // Base case: invalid index
-    }
+    // Recursively destroy all descendants of the first child
+    if (pcb[processIndex].firstChild != NULL && *pcb[processIndex].firstChild != -1)
+        recursivelyDestroyDescendants(*pcb[processIndex].firstChild);
 
-    // Destroy all descendants of this process's first child
-    if (pcb[processIndex].firstChild && *pcb[processIndex].firstChild != -1) {
-        recursivelyDestroyChildProcesses(*pcb[processIndex].firstChild, processIndex);
-    }
+    // Move to destroy siblings only after the current process and its descendants are handled
+    if (pcb[processIndex].youngerSibling != NULL && *pcb[processIndex].youngerSibling != -1)
+        recursivelyDestroyDescendants(*pcb[processIndex].youngerSibling);
 
-    // Update sibling process if this process is to be destroyed
-    if (pcb[processIndex].olderSibling && *pcb[processIndex].olderSibling != -1) {
-        *pcb[*pcb[processIndex].olderSibling].youngerSibling = pcb[processIndex].youngerSibling ? *pcb[processIndex].youngerSibling : -1;
-    }
-    if (pcb[processIndex].youngerSibling && *pcb[processIndex].youngerSibling != -1) {
-        recursivelyDestroyChildProcesses(*pcb[processIndex].youngerSibling, parentIndex); // Move to younger sibling after current process is handled
-    } else if (parentIndex != -1 && pcb[parentIndex].firstChild && *pcb[parentIndex].firstChild == processIndex) {
-        // If no younger siblings and this is the first child, update the parent's firstChild process to skip the destroyed process
-        *pcb[parentIndex].firstChild = -1;
-    }
-
-    // KAMIKAZE!
+    // 'Destroy' this process by resetting its PCB entries
     *pcb[processIndex].parent = -1;
     *pcb[processIndex].firstChild = -1;
     *pcb[processIndex].olderSibling = -1;
@@ -178,7 +166,7 @@ void recursivelyDestroyChildProcesses(int processIndex, int parentIndex) {
 
 void option3(void) {
     int processIndex;
-    printf("Enter the process index to be destroyed along with its descendants: ");
+    printf("Enter the process index whose descendants are to be destroyed: ");
     scanf("%d", &processIndex);
 
     // Validate the process index
@@ -187,16 +175,12 @@ void option3(void) {
         return;
     }
 
-    // Correct the parent index for the recursive call
-    int parentIndex = *pcb[processIndex].parent;
-    
-    // If the process is the first child of its parent, directly update the parent's firstChild pointer
-    if (parentIndex != -1 && pcb[parentIndex].firstChild && *pcb[parentIndex].firstChild == processIndex) {
-        *pcb[parentIndex].firstChild = pcb[processIndex].youngerSibling ? *pcb[processIndex].youngerSibling : -1;
+    // Start the recursive destruction from the first child of the specified process
+    if (pcb[processIndex].firstChild != NULL && *pcb[processIndex].firstChild != -1) {
+        recursivelyDestroyDescendants(*pcb[processIndex].firstChild);
+        // Reset the firstChild pointer after all descendants are destroyed
+        *pcb[processIndex].firstChild = -1;
     }
-
-    // Start the recursive destruction from the specified process
-    recursivelyDestroyChildProcesses(processIndex, parentIndex);
 
     printPCBTable();
 }
