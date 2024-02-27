@@ -27,7 +27,8 @@ void printPCBTable(void) {
     for (int i = 0; i < numberOfProcesses; i++) {
         // Check if the process has not been initialized or destroyed
         if (pcb[i].parent == NULL || *pcb[i].parent == -1) {
-            continue; // Skip printing this row
+            // Skip printing this row
+            continue;
         }
 
         printf("%d\t", i);
@@ -98,7 +99,7 @@ void option1(void) {
 
     // Initialize the root process with no children if processes are defined
     if (numberOfProcesses > 0) {
-        *pcb[0].parent = 0; // Or set to -1 if you prefer indicating no parent
+        *pcb[0].parent = 0; // Or set to -1 if it's prefered indicating no parent
         *pcb[0].firstChild = -1;
         *pcb[0].olderSibling = -1;
         *pcb[0].youngerSibling = -1;
@@ -121,7 +122,8 @@ void option2(void) {
     scanf("%d", &p);
 
     // Check for the existence of the parent process
-    if (p < 0 || p >= numberOfProcesses || (*pcb[p].parent == -1 && p != 0)) { // Assuming index 0 can be a valid parent
+    // Assuming index 0 can be a valid parent
+    if (p < 0 || p >= numberOfProcesses || (*pcb[p].parent == -1 && p != 0)) {
         printf("Error: No existing process for the given parent index.\n\n");
         return;
     }
