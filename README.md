@@ -3,4 +3,4 @@ The program creates/destroys child processes based on choosing from a menu of ch
 1) Enter parameters
 2) Create a new child process
 3) Destroy all descendants of a process
-4) Quit program and free memory
+4) Quit the program and free memory
