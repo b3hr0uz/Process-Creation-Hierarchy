@@ -12,7 +12,6 @@
 #define PCB_TABLE_HEADER "i\tParent\tFirst\tOlder\tYounger\n---------------------------------------\n"
 #define MENU_OF_OPTIONS "1) Enter parameters\n2) Create a new child process\n3) Destroy all descendants of a process\n4) Quit program and free memory\nEnter selection: "
 
-
 struct node {
     int *parent;
     int *firstChild;
