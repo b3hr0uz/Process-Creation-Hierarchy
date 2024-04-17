@@ -10,6 +10,7 @@
 
 #define MAX_PCB_SIZE 100
 #define PCB_TABLE_HEADER "i\tParent\tFirst\tOlder\tYounger\n---------------------------------------\n"
+#define MENU_OF_OPTIONS "1) Enter parameters\n2) Create a new child process\n3) Destroy all descendants of a process\n4) Quit program and free memory\nEnter selection: "
 
 struct node {
     int *parent;
@@ -196,7 +197,7 @@ int main(void) {
     int option = 0;
 
     while (option != 4) {
-        printf("1) Enter parameters\n2) Create a new child process\n3) Destroy all descendants of a process\n4) Quit program and free memory\nEnter selection: ");
+        printf(MENU_OF_OPTIONS);
         scanf("%d", &option);
 
         switch (option) {
